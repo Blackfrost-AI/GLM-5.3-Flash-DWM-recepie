@@ -43,7 +43,6 @@ SKIP_EARLY = 2
 WORKERS = 8
 DIRECTION_BYTES = 151_148_124
 DIRECTION_SHA256 = "9de7f65c147bb25f15ea4dea411d67048f6eb13c79a2513153fbde96dfcf343e"
-DIRECTION_METADATA_SHA256 = "84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5"
 SOURCE_CONFIG_SHA256 = "33e63ec7fe607658be712bd6dd3c16c6549960d8e7f0483d34b939881b55f943"
 SOURCE_INDEX_SHA256 = "e6007bd58fb7e07f9fe69544257ee2713f252ef5855bbf685b48c991d524ef0f"
 EXPECTED_COUNTS = {
@@ -125,14 +124,41 @@ def inspect_inputs(args):
         raise RuntimeError(f"directions are not unit normalized: {float(norms.min())}..{float(norms.max())}")
 
     metadata_path = directions_path.with_suffix(".metadata.json")
-    if sha256_file(metadata_path) != DIRECTION_METADATA_SHA256:
-        raise RuntimeError("direction metadata checksum mismatch")
     direction_metadata = json.loads(metadata_path.read_text())
     model_record = direction_metadata["model"]
     if model_record["repo"] != args.repo_id or model_record["revision"] != args.revision:
         raise RuntimeError(f"direction provenance mismatch: {model_record}")
     if model_record.get("checkpoint_precision") != "bf16":
         raise RuntimeError("directions were not captured from the BF16 checkpoint")
+    if (
+        model_record.get("hidden_size") != 4096
+        or model_record.get("num_hidden_layers") != 45
+        or model_record.get("hc_mult") != 4
+        or model_record.get("num_nextn_predict_layers") != 1
+    ):
+        raise RuntimeError("direction metadata geometry mismatch")
+    method_record = direction_metadata["method"]
+    if (
+        method_record.get("primary_site") != "layer_end_mean"
+        or method_record.get("sites") != ["layer_end_mean", "attn_input", "ffn_input"]
+        or method_record.get("last_token") is not True
+        or method_record.get("left_padding") is not True
+        or method_record.get("reasoning_effort") != "max"
+        or method_record.get("batch_size") != 32
+        or method_record.get("weights_modified") is not False
+        or method_record.get("mtp_layer_captured") is not False
+    ):
+        raise RuntimeError("direction capture-method metadata mismatch")
+    prompt_record = direction_metadata["prompts"]
+    if prompt_record != {
+        "harmful_count": 32,
+        "harmless_count": 32,
+        "harmful_sha256": "178acbc0c022698ba37477a66c3ed75b9379aecbcacd71baffb4f0ee6475c90f",
+        "harmless_sha256": "8caf820292fd7c30b5a95add58c2bfc11a3504be21d594c8d39cdb57d328ec6a",
+    }:
+        raise RuntimeError("direction prompt metadata mismatch")
+    if direction_metadata.get("summary", {}).get("artifact_shape") != [45, 4096]:
+        raise RuntimeError("direction metadata artifact-shape mismatch")
 
     index = json.loads((source / "model.safetensors.index.json").read_text())
     weight_map = index["weight_map"]

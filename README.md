@@ -29,6 +29,12 @@ Recover it or reproduce it with the pinned capture environment. The executor
 rejects every different digest. This prevents an agent from silently replacing
 the BF16 direction with the earlier FP8 direction.
 
+The original metadata sidecar is preserved as
+[`evidence/directions.metadata.canonical.json`](evidence/directions.metadata.canonical.json).
+A fresh capture naturally changes volatile fields such as elapsed time, so its
+sidecar is checked against the locked model, geometry, prompts, capture method,
+and artifact shape instead of being required to have the historical byte hash.
+
 ## Method lock
 
 | Item | Locked value |
@@ -119,7 +125,7 @@ states this boundary in machine-readable form.
 | `environment.lock.json` | Recorded image and Python package versions |
 | `assets/pairs.json` | Exact 32 harmful and 32 harmless prompts |
 | `assets/directions.asset.json` | Required direction size, hashes, status, and recovery rules |
-| `evidence/` | Sanitized capture receipt and separately labeled alpha-3.0 lineage |
+| `evidence/` | Canonical direction metadata, capture receipt, and separately labeled alpha-3.0 lineage |
 | `scripts/capture_directions.py` | Locked BF16 direction capture implementation |
 | `scripts/run_locked.py` | Locked alpha-2.8 BF16 editor with no alpha override |
 | `scripts/verify_output.py` | Independent source/output/MTP and projection verifier |

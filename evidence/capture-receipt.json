@@ -14,6 +14,10 @@
     "primary_shape": [45, 4096],
     "dirs_alias_exact": true
   },
+  "canonical_metadata": {
+    "path": "evidence/directions.metadata.canonical.json",
+    "sha256": "84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5"
+  },
   "verification": {
     "all_tensors_finite": true,
     "primary_unit_norm_min": 0.9999998211860657,

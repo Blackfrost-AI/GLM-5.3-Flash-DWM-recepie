@@ -63,7 +63,8 @@ def verify_lock() -> dict:
         "source.indexed_tensor_bytes": 642646653816,
         "directions.bytes": DIRECTION_BYTES,
         "directions.sha256": DIRECTION_SHA256,
-        "directions.metadata_sha256": DIRECTION_METADATA_SHA256,
+        "directions.canonical_metadata": "evidence/directions.metadata.canonical.json",
+        "directions.canonical_metadata_sha256": DIRECTION_METADATA_SHA256,
         "directions.prompt_manifest_sha256": PROMPTS_SHA256,
         "directions.harmful_count": 32,
         "directions.harmless_count": 32,
@@ -129,7 +130,10 @@ def verify_descriptor() -> dict:
     require(descriptor["asset_name"] == "directions.safetensors", "direction filename mismatch")
     require(descriptor["bytes"] == DIRECTION_BYTES, "direction descriptor size mismatch")
     require(descriptor["sha256"] == DIRECTION_SHA256, "direction descriptor hash mismatch")
-    require(descriptor["metadata_sha256"] == DIRECTION_METADATA_SHA256, "metadata descriptor hash mismatch")
+    require(descriptor["canonical_metadata_sha256"] == DIRECTION_METADATA_SHA256, "metadata descriptor hash mismatch")
+    canonical = ROOT / descriptor["canonical_metadata"]
+    require(canonical.is_file(), "canonical metadata is missing")
+    require(sha256(canonical) == DIRECTION_METADATA_SHA256, "canonical metadata hash mismatch")
     require(descriptor["archive_status"] == "missing", "archive status must remain explicit")
     require(descriptor["public_release_asset_published"] is False, "unpublished asset marked published")
     require(descriptor["required_for_execution"] is True, "direction must be required")
@@ -191,11 +195,28 @@ def verify_direction(path: pathlib.Path) -> dict:
     require(sha256(path) == DIRECTION_SHA256, "direction SHA-256 mismatch")
     metadata_path = path.with_suffix(".metadata.json")
     require(metadata_path.is_file(), "direction metadata is missing")
-    require(sha256(metadata_path) == DIRECTION_METADATA_SHA256, "direction metadata hash mismatch")
+    metadata_sha256 = sha256(metadata_path)
     metadata = read_json(metadata_path)
     require(metadata["model"]["repo"] == SOURCE_REPO, "direction source repository mismatch")
     require(metadata["model"]["revision"] == SOURCE_REVISION, "direction source revision mismatch")
     require(metadata["model"]["checkpoint_precision"] == "bf16", "direction is not BF16-captured")
+    require(metadata["model"]["hidden_size"] == 4096, "direction hidden size mismatch")
+    require(metadata["model"]["num_hidden_layers"] == 45, "direction layer count mismatch")
+    require(metadata["model"]["hc_mult"] == 4, "direction mHC width mismatch")
+    require(metadata["model"]["num_nextn_predict_layers"] == 1, "direction MTP geometry mismatch")
+    method = metadata["method"]
+    require(method["primary_site"] == "layer_end_mean", "direction primary site mismatch")
+    require(method["sites"] == ["layer_end_mean", "attn_input", "ffn_input"], "direction sites mismatch")
+    require(method["last_token"] is True and method["left_padding"] is True, "direction token-position policy mismatch")
+    require(method["reasoning_effort"] == "max" and method["batch_size"] == 32, "direction capture settings mismatch")
+    require(method["weights_modified"] is False and method["mtp_layer_captured"] is False, "direction capture boundary mismatch")
+    require(metadata["prompts"] == {
+        "harmful_count": 32,
+        "harmless_count": 32,
+        "harmful_sha256": "178acbc0c022698ba37477a66c3ed75b9379aecbcacd71baffb4f0ee6475c90f",
+        "harmless_sha256": "8caf820292fd7c30b5a95add58c2bfc11a3504be21d594c8d39cdb57d328ec6a",
+    }, "direction prompt metadata mismatch")
+    require(metadata["summary"]["artifact_shape"] == [45, 4096], "direction artifact shape metadata mismatch")
     with path.open("rb") as handle:
         header_size = struct.unpack("<Q", handle.read(8))[0]
         header = json.loads(handle.read(header_size))
@@ -211,7 +232,15 @@ def verify_direction(path: pathlib.Path) -> dict:
             handle.seek(data_start + start)
             chunks.append(handle.read(end - start))
         require(chunks[0] == chunks[1], "dirs alias differs from primary direction")
-    return {"bytes": DIRECTION_BYTES, "sha256": DIRECTION_SHA256, "tensors": 32, "shape": [45, 4096]}
+    return {
+        "bytes": DIRECTION_BYTES,
+        "sha256": DIRECTION_SHA256,
+        "tensors": 32,
+        "shape": [45, 4096],
+        "metadata_sha256": metadata_sha256,
+        "canonical_metadata": metadata_sha256 == DIRECTION_METADATA_SHA256,
+        "metadata_semantics_locked": True,
+    }
 
 
 def verify_source(path: pathlib.Path) -> dict:

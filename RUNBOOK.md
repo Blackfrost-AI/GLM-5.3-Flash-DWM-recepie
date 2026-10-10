@@ -91,14 +91,19 @@ Expected source facts:
 ## 6. Obtain the exact direction
 
 The original artifact is not in this Git repository or the retained archive.
-Preferred action: recover these two files from the recorded run directory:
+Preferred action: recover the tensor from the recorded run directory:
 
 ```text
 20260826T1742Z-bf16-direction-capture/directions.safetensors
-20260826T1742Z-bf16-direction-capture/directions.metadata.json
 ```
 
-Place both in `ARTIFACT_ROOT`, then verify:
+The exact historical metadata sidecar is already bundled. Pair it with the
+recovered tensor, then verify:
+
+```bash
+cp evidence/directions.metadata.canonical.json \
+  "$ARTIFACT_ROOT/directions.metadata.json"
+```
 
 ```bash
 python3 scripts/verify_package.py \
@@ -110,7 +115,8 @@ Required direction facts:
 
 - file size `151,148,124` bytes;
 - SHA-256 `9de7f65c147bb25f15ea4dea411d67048f6eb13c79a2513153fbde96dfcf343e`;
-- metadata SHA-256 `84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5`;
+- bundled canonical metadata SHA-256
+  `84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5`;
 - 32 tensors; and
 - `dirs` shape `[45, 4096]` and exact alias content with
   `directions.layer_end_mean`.
@@ -153,10 +159,12 @@ docker run --rm \
 ```
 
 The capture script has no revision, repository, batch-size, padding, reasoning,
-or capture-site override. Run the package verifier immediately afterward. If
-either recorded digest differs, stop and preserve the recapture as diagnostic
-evidence. Do not edit the lock or continue the alpha-2.8 run under this method
-name.
+or capture-site override. Run the package verifier immediately afterward. A
+fresh sidecar has new elapsed-time data, so the verifier checks its locked
+model, geometry, prompts, method, and artifact shape. If the direction tensor
+digest differs or any semantic sidecar field differs, stop and preserve the
+recapture as diagnostic evidence. Do not edit the lock or continue the
+alpha-2.8 run under this method name.
 
 ## 7. Inspect without writing weights
 
