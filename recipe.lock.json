@@ -1,0 +1,83 @@
+{
+  "schema": "blackfrost.dwm.locked-method.v1",
+  "recipe_id": "glm-5.3-flash-bf16-a2p8",
+  "version": "1.0.0",
+  "source": {
+    "repo": "zai-org/GLM-5.3-Flash-BF16",
+    "revision": "b1967181a3917ae70a437f4884748f6b8e3a1f4d",
+    "precision": "bf16",
+    "config_sha256": "33e63ec7fe607658be712bd6dd3c16c6549960d8e7f0483d34b939881b55f943",
+    "index_sha256": "e6007bd58fb7e07f9fe69544257ee2713f252ef5855bbf685b48c991d524ef0f",
+    "indexed_tensors": 38770,
+    "weight_shards": 120,
+    "indexed_tensor_bytes": 642646653816,
+    "quantized": false
+  },
+  "directions": {
+    "artifact": "directions.safetensors",
+    "bytes": 151148124,
+    "sha256": "9de7f65c147bb25f15ea4dea411d67048f6eb13c79a2513153fbde96dfcf343e",
+    "metadata_sha256": "84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5",
+    "prompt_manifest": "assets/pairs.json",
+    "prompt_manifest_sha256": "08f90187547463dbf0fbe76c4003e9ab40add53fa111e4a7553f7da749bfdc10",
+    "harmful_count": 32,
+    "harmless_count": 32,
+    "harmful_sha256": "178acbc0c022698ba37477a66c3ed75b9379aecbcacd71baffb4f0ee6475c90f",
+    "harmless_sha256": "8caf820292fd7c30b5a95add58c2bfc11a3504be21d594c8d39cdb57d328ec6a",
+    "tensor_count": 32,
+    "primary_key": "dirs",
+    "primary_shape": [45, 4096],
+    "primary_site": "layer_end_mean",
+    "sites": ["layer_end_mean", "attn_input", "ffn_input"],
+    "capture_position": "last token after chat template with generation prompt",
+    "padding_side": "left",
+    "reasoning_effort": "max",
+    "batch_size": 32,
+    "definition": "unit(mean harmful - mean harmless) of the unweighted mean across four mHC streams at each main decoder-layer output"
+  },
+  "operation": {
+    "formula": "W' = W - alpha * r(r^T W)",
+    "alpha": 2.8,
+    "passes": 1,
+    "rank": 1,
+    "skip_early": 2,
+    "first_layer": 2,
+    "last_layer": 44,
+    "excluded_mtp_layer": 45,
+    "arithmetic": "FP32 projection and edit, then BF16 rounding",
+    "norm_restoration": false,
+    "targets": {
+      "o_proj": 43,
+      "dense_down": 1,
+      "expert_down": 12096,
+      "shared_down": 42,
+      "total": 12182
+    },
+    "mtp": {
+      "transplant_from_clean_source": true,
+      "expected_tensors": 889,
+      "expected_bytes": 14865185408,
+      "require_all_exact": true
+    }
+  },
+  "execution": {
+    "gpus": 8,
+    "workers": 8,
+    "network": "none",
+    "source_mount": "read_only",
+    "shm_size": "128g"
+  },
+  "qualification": {
+    "alpha_2_8_checkpoint_built": false,
+    "alpha_2_8_served": false,
+    "alpha_2_8_capability_tested": false,
+    "alpha_2_8_refusal_tested": false,
+    "alpha_2_8_redline_tested": false,
+    "historical_alpha_3_results_are_alpha_2_8_evidence": false
+  },
+  "reproducibility": {
+    "class": "method-exact when the exact direction artifact and pinned source verify",
+    "byte_identical_output_promised": false,
+    "reason": "Output serialization and BF16 rounding can depend on the recorded runtime and hardware; output shard hashes for alpha 2.8 do not yet exist."
+  }
+}

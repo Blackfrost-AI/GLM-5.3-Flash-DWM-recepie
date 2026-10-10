@@ -1,0 +1,15 @@
+{
+  "schema": "blackfrost.recorded-environment.v1",
+  "capture_and_edit_image": "local/glm53-direction-capture:20260826",
+  "capture_and_edit_image_id": "sha256:4078efee2f9bad820f1a5bf4822e1dc3cc2ab923dde5a8319b0d0f313f104f6d",
+  "base_image": "lmsysorg/sglang@sha256:6c594fbcae2e71c61a49895c99edcfedf4e9e46cc8a35bdb29ce2ef7dff8847a",
+  "dockerfile_sha256": "267f620efefb12107dd4ea52a09118aa76aa4b81c9971fd9f259ec3a87b90d68",
+  "python": "3.12.3",
+  "torch": "2.13.0+cu130",
+  "transformers": "5.16.0.dev0",
+  "accelerate": "1.14.0",
+  "safetensors": "0.8.0",
+  "kernels": "0.16.0",
+  "cuda_device_count": 8,
+  "network_during_capture_and_edit": "none"
+}

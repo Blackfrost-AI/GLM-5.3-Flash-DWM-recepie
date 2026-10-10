@@ -1,0 +1,92 @@
+{
+  "name": "glm53-flash-dwm-a2p8-audit",
+  "variables": {
+    "TASK": "Audit the public GLM-5.3-Flash DWM alpha-2.8 package without modifying files or borrowing alpha-3.0 behavior claims."
+  },
+  "stages": [
+    {
+      "id": "contract",
+      "prompt": "Read AGENTS.md completely. Report the immutable method boundary, missing-asset stop condition, harness boundary, and alpha-2.8 claims boundary. Open no other file.",
+      "allowedTools": ["read_file"],
+      "exactPaths": ["AGENTS.md"],
+      "maxToolCalls": 4,
+      "minSuccessfulToolCalls": 1,
+      "requireCompleteRead": true,
+      "enforceContinuation": true,
+      "requiredPatterns": ["2\\.8", "missing", "read-only|read only", "alpha-3\\.0"]
+    },
+    {
+      "id": "lock",
+      "prompt": "Read recipe.lock.json completely. Report the source revision, direction digest, alpha, pass count, layer range, MTP rule, and target counts. Open no other file.",
+      "allowedTools": ["read_file"],
+      "exactPaths": ["recipe.lock.json"],
+      "maxToolCalls": 6,
+      "minSuccessfulToolCalls": 1,
+      "requireCompleteRead": true,
+      "enforceContinuation": true,
+      "requiredPatterns": ["2\\.8", "b1967181a3917ae70a437f4884748f6b8e3a1f4d", "9de7f65c147bb25f15ea4dea411d67048f6eb13c79a2513153fbde96dfcf343e", "12182"]
+    },
+    {
+      "id": "pairs",
+      "prompt": "Read assets/pairs.json completely. Confirm there are 32 harmful and 32 harmless entries and that equal array indices define each pair. Do not repeat the full prompt set. Open no other file.",
+      "allowedTools": ["read_file"],
+      "exactPaths": ["assets/pairs.json"],
+      "maxToolCalls": 5,
+      "minSuccessfulToolCalls": 1,
+      "requireCompleteRead": true,
+      "enforceContinuation": true,
+      "requiredPatterns": ["32", "index|indices", "harmful", "harmless"]
+    },
+    {
+      "id": "asset",
+      "prompt": "Read assets/directions.asset.json completely. Report the byte count, both digests, archive status, recovery choices, and fail-closed substitution rule. Open no other file.",
+      "allowedTools": ["read_file"],
+      "exactPaths": ["assets/directions.asset.json"],
+      "maxToolCalls": 4,
+      "minSuccessfulToolCalls": 1,
+      "requireCompleteRead": true,
+      "enforceContinuation": true,
+      "requiredPatterns": ["151148124", "9de7f65c147bb25f15ea4dea411d67048f6eb13c79a2513153fbde96dfcf343e", "missing", "substitute"]
+    },
+    {
+      "id": "runbook",
+      "prompt": "Read RUNBOOK.md completely. Report the ordered package check, source check, direction recovery or capture, dry inspection, alpha-2.8 build, independent output verification, manifest, and later qualification steps. Open no other file.",
+      "allowedTools": ["read_file"],
+      "exactPaths": ["RUNBOOK.md"],
+      "maxToolCalls": 14,
+      "minSuccessfulToolCalls": 1,
+      "requireCompleteRead": true,
+      "enforceContinuation": true,
+      "requiredPatterns": ["verify", "capture", "inspect", "build", "qualification"]
+    },
+    {
+      "id": "evidence",
+      "prompt": "Read both evidence receipts completely. Separate verified direction-capture and historical alpha-3.0 facts from every untested alpha-2.8 claim. Open no other file.",
+      "allowedTools": ["read_file"],
+      "exactPaths": ["evidence/capture-receipt.json", "evidence/historical-alpha3-lineage.json"],
+      "maxToolCalls": 8,
+      "minSuccessfulToolCalls": 2,
+      "requireCompleteRead": true,
+      "enforceContinuation": true,
+      "requiredPatterns": ["captured_verified", "3\\.0", "2\\.8", "not evidence|not.*evidence"]
+    },
+    {
+      "id": "executor",
+      "prompt": "Read scripts/run_locked.py completely. Confirm alpha 2.8, one pass, source and direction checksum gates, layers 2 through 44, excluded MTP layer 45, target counts, and lack of method overrides. Open no other file.",
+      "allowedTools": ["read_file"],
+      "exactPaths": ["scripts/run_locked.py"],
+      "maxToolCalls": 24,
+      "minSuccessfulToolCalls": 1,
+      "requireCompleteRead": true,
+      "enforceContinuation": true,
+      "requiredPatterns": ["ALPHA", "2\\.8", "12182|12,182", "checksum", "layer 45|layers.45"]
+    },
+    {
+      "id": "synthesis",
+      "prompt": "Make no tool calls. Synthesize the audit using exactly these headings in order: LOCK STATUS; SOURCE; PAIRS AND DIRECTION; ALPHA-2.8 OPERATION; MTP; HARNESS BOUNDARY; HISTORICAL LINEAGE; UNTESTED; NEXT VALID ACTION. Do not call an alpha-2.8 checkpoint built, served, qualified, safe, or release-ready.",
+      "allowedTools": [],
+      "maxToolCalls": 0,
+      "requiredPatterns": ["LOCK STATUS", "SOURCE", "PAIRS AND DIRECTION", "ALPHA-2.8 OPERATION", "MTP", "HARNESS BOUNDARY", "HISTORICAL LINEAGE", "UNTESTED", "NEXT VALID ACTION"]
+    }
+  ]
+}

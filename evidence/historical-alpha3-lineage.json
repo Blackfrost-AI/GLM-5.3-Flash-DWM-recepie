@@ -1,0 +1,24 @@
+{
+  "schema": "blackfrost.historical-lineage.v1",
+  "method_relationship": "Same source, direction, layer range, target surface, one-pass operator, and no norm restore; historical alpha was 3.0 while this package locks 2.8.",
+  "historical_alpha": 3.0,
+  "package_alpha": 2.8,
+  "historical_bf16_run_id": "20260826T1801Z-bf16-dwm-a3-skip2",
+  "historical_structure": {
+    "status": "complete_verified",
+    "source_unchanged": true,
+    "output_shards": 120,
+    "output_index_keys": 38770,
+    "edited_tensors": 12182,
+    "mtp_tensors_exact": 889,
+    "mtp_bytes_exact": 14865185408
+  },
+  "historical_alpha3_nvfp4_evaluation": {
+    "corpus": "historical 450-prompt corpus",
+    "harmful_true_refusals": "4/300",
+    "total_true_refusals": "5/450",
+    "errors": 0,
+    "settings": "thinking on, reasoning effort max, temperature 1, top_p 0.95, max_tokens 16384"
+  },
+  "claim_boundary": "These measurements are alpha-3.0 lineage only and are not evidence for alpha 2.8. Current qualification requires the versioned 443-row measurement corpus plus the separate 9-row red-line holdout and capability gates."
+}

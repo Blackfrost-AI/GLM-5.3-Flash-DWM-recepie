@@ -1,0 +1,33 @@
+{
+  "schema": "blackfrost.capture-receipt.v1",
+  "run_id": "20260826T1742Z-bf16-direction-capture",
+  "status": "captured_verified",
+  "source_repo": "zai-org/GLM-5.3-Flash-BF16",
+  "source_revision": "b1967181a3917ae70a437f4884748f6b8e3a1f4d",
+  "completed_at_utc": "2026-08-26T17:48:22Z",
+  "elapsed_seconds": 315.5,
+  "samples": {"harmful": 32, "harmless": 32},
+  "artifact": {
+    "bytes": 151148124,
+    "sha256": "9de7f65c147bb25f15ea4dea411d67048f6eb13c79a2513153fbde96dfcf343e",
+    "tensor_count": 32,
+    "primary_shape": [45, 4096],
+    "dirs_alias_exact": true
+  },
+  "verification": {
+    "all_tensors_finite": true,
+    "primary_unit_norm_min": 0.9999998211860657,
+    "primary_unit_norm_max": 1.0000001192092896,
+    "checkpoint_files_modified": 0,
+    "mtp_captured": false
+  },
+  "signal_summary": {
+    "split_half_cosine_mean": 0.8725982904434204,
+    "split_half_cosine_median": 0.9464691281318665,
+    "skip_early_2_split_half_cosine_mean": 0.8913875346960023,
+    "effect_size_mean": 1.1703693866729736,
+    "adjacent_layer_cosine_mean": 0.8249124884605408,
+    "peak_layer": 44
+  },
+  "limitation": "Signal measurements validate the captured representation; they do not establish response-level behavior or alpha-2.8 qualification."
+}
