@@ -20,7 +20,8 @@ SOURCE_INDEX_SHA256 = "e6007bd58fb7e07f9fe69544257ee2713f252ef5855bbf685b48c991d
 PROMPTS_SHA256 = "08f90187547463dbf0fbe76c4003e9ab40add53fa111e4a7553f7da749bfdc10"
 DIRECTION_BYTES = 151_148_124
 DIRECTION_SHA256 = "9de7f65c147bb25f15ea4dea411d67048f6eb13c79a2513153fbde96dfcf343e"
-DIRECTION_METADATA_SHA256 = "84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5"
+DIRECTION_METADATA_REFERENCE_SHA256 = "d77801ddc2eebad5b698439f68c4d7b95f539f09755b11edc25b93d1bb5d5cf4"
+DIRECTION_METADATA_RECORDED_SHA256 = "84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5"
 RUNTIME_EXCLUSIONS = {"SHA256SUMS", "config.local.json", ".DS_Store"}
 
 
@@ -63,8 +64,9 @@ def verify_lock() -> dict:
         "source.indexed_tensor_bytes": 642646653816,
         "directions.bytes": DIRECTION_BYTES,
         "directions.sha256": DIRECTION_SHA256,
-        "directions.canonical_metadata": "evidence/directions.metadata.canonical.json",
-        "directions.canonical_metadata_sha256": DIRECTION_METADATA_SHA256,
+        "directions.metadata_reference": "evidence/directions.metadata.reference.json",
+        "directions.metadata_reference_sha256": DIRECTION_METADATA_REFERENCE_SHA256,
+        "directions.recorded_original_metadata_sha256": DIRECTION_METADATA_RECORDED_SHA256,
         "directions.prompt_manifest_sha256": PROMPTS_SHA256,
         "directions.harmful_count": 32,
         "directions.harmless_count": 32,
@@ -130,10 +132,11 @@ def verify_descriptor() -> dict:
     require(descriptor["asset_name"] == "directions.safetensors", "direction filename mismatch")
     require(descriptor["bytes"] == DIRECTION_BYTES, "direction descriptor size mismatch")
     require(descriptor["sha256"] == DIRECTION_SHA256, "direction descriptor hash mismatch")
-    require(descriptor["canonical_metadata_sha256"] == DIRECTION_METADATA_SHA256, "metadata descriptor hash mismatch")
-    canonical = ROOT / descriptor["canonical_metadata"]
-    require(canonical.is_file(), "canonical metadata is missing")
-    require(sha256(canonical) == DIRECTION_METADATA_SHA256, "canonical metadata hash mismatch")
+    require(descriptor["metadata_reference_sha256"] == DIRECTION_METADATA_REFERENCE_SHA256, "metadata reference hash mismatch")
+    require(descriptor["recorded_original_metadata_sha256"] == DIRECTION_METADATA_RECORDED_SHA256, "recorded metadata hash mismatch")
+    reference = ROOT / descriptor["metadata_reference"]
+    require(reference.is_file(), "metadata reference is missing")
+    require(sha256(reference) == DIRECTION_METADATA_REFERENCE_SHA256, "metadata reference file hash mismatch")
     require(descriptor["archive_status"] == "missing", "archive status must remain explicit")
     require(descriptor["public_release_asset_published"] is False, "unpublished asset marked published")
     require(descriptor["required_for_execution"] is True, "direction must be required")
@@ -238,7 +241,7 @@ def verify_direction(path: pathlib.Path) -> dict:
         "tensors": 32,
         "shape": [45, 4096],
         "metadata_sha256": metadata_sha256,
-        "canonical_metadata": metadata_sha256 == DIRECTION_METADATA_SHA256,
+        "bundled_metadata_reference": metadata_sha256 == DIRECTION_METADATA_REFERENCE_SHA256,
         "metadata_semantics_locked": True,
     }
 

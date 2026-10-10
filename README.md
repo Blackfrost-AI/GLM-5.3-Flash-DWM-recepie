@@ -29,8 +29,9 @@ Recover it or reproduce it with the pinned capture environment. The executor
 rejects every different digest. This prevents an agent from silently replacing
 the BF16 direction with the earlier FP8 direction.
 
-The original metadata sidecar is preserved as
-[`evidence/directions.metadata.canonical.json`](evidence/directions.metadata.canonical.json).
+The original metadata is preserved as a path-sanitized semantic reference at
+[`evidence/directions.metadata.reference.json`](evidence/directions.metadata.reference.json),
+and its original byte hash remains recorded in the receipts.
 A fresh capture naturally changes volatile fields such as elapsed time, so its
 sidecar is checked against the locked model, geometry, prompts, capture method,
 and artifact shape instead of being required to have the historical byte hash.
@@ -155,9 +156,9 @@ bounded, read-only workspace:
 
 ```bash
 cp config.ablagent.example.json config.local.json
-/Users/craigmac/Desktop/Ablagent-Standalone-Harness-1.0.0/bin/ablagent \
+/path/to/Ablagent-Standalone-Harness-1.0.0/bin/ablagent \
   --config "$PWD/config.local.json" --probe
-/Users/craigmac/Desktop/Ablagent-Standalone-Harness-1.0.0/bin/ablagent \
+/path/to/Ablagent-Standalone-Harness-1.0.0/bin/ablagent \
   --config "$PWD/config.local.json" \
   --workspace "$PWD" \
   --plan plans/ablagent-read-only-audit.json

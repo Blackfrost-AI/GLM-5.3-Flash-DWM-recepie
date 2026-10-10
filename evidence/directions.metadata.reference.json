@@ -16,7 +16,7 @@
     "num_nextn_predict_layers": 1
   },
   "method": {
-    "source_script": "/home/craigmac/GLM-5.2/src/derisking/ablit_glm52.py",
+    "source_script": "historical GLM-5.2 DWM source path redacted",
     "primary_site": "layer_end_mean",
     "sites": [
       "layer_end_mean",

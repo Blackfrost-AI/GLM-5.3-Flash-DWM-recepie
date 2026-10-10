@@ -97,11 +97,11 @@ Preferred action: recover the tensor from the recorded run directory:
 20260826T1742Z-bf16-direction-capture/directions.safetensors
 ```
 
-The exact historical metadata sidecar is already bundled. Pair it with the
-recovered tensor, then verify:
+The historical metadata is bundled as a path-sanitized semantic reference.
+Pair it with the recovered tensor, then verify:
 
 ```bash
-cp evidence/directions.metadata.canonical.json \
+cp evidence/directions.metadata.reference.json \
   "$ARTIFACT_ROOT/directions.metadata.json"
 ```
 
@@ -115,8 +115,9 @@ Required direction facts:
 
 - file size `151,148,124` bytes;
 - SHA-256 `9de7f65c147bb25f15ea4dea411d67048f6eb13c79a2513153fbde96dfcf343e`;
-- bundled canonical metadata SHA-256
-  `84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5`;
+- original recorded metadata SHA-256
+  `84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5`
+  (the bundled path-sanitized reference has its own hash in the lock);
 - 32 tensors; and
 - `dirs` shape `[45, 4096]` and exact alias content with
   `directions.layer_end_mean`.
@@ -296,9 +297,9 @@ The read-only plan can be run before any large input is acquired:
 
 ```bash
 cp config.ablagent.example.json config.local.json
-/Users/craigmac/Desktop/Ablagent-Standalone-Harness-1.0.0/bin/ablagent \
+/path/to/Ablagent-Standalone-Harness-1.0.0/bin/ablagent \
   --config "$PWD/config.local.json" --probe
-/Users/craigmac/Desktop/Ablagent-Standalone-Harness-1.0.0/bin/ablagent \
+/path/to/Ablagent-Standalone-Harness-1.0.0/bin/ablagent \
   --config "$PWD/config.local.json" \
   --workspace "$PWD" \
   --plan plans/ablagent-read-only-audit.json

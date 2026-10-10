@@ -14,9 +14,11 @@
     "primary_shape": [45, 4096],
     "dirs_alias_exact": true
   },
-  "canonical_metadata": {
-    "path": "evidence/directions.metadata.canonical.json",
-    "sha256": "84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5"
+  "metadata_reference": {
+    "path": "evidence/directions.metadata.reference.json",
+    "sha256": "d77801ddc2eebad5b698439f68c4d7b95f539f09755b11edc25b93d1bb5d5cf4",
+    "sanitization": "historical source-script path redacted",
+    "recorded_original_sha256": "84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5"
   },
   "verification": {
     "all_tensors_finite": true,

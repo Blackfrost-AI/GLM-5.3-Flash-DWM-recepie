@@ -4,15 +4,16 @@
   "bytes": 151148124,
   "sha256": "9de7f65c147bb25f15ea4dea411d67048f6eb13c79a2513153fbde96dfcf343e",
   "execution_metadata_name": "directions.metadata.json",
-  "canonical_metadata": "evidence/directions.metadata.canonical.json",
-  "canonical_metadata_sha256": "84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5",
-  "execution_metadata_policy": "Use the bundled canonical sidecar with a recovered original tensor, or the newly generated sidecar with an exact-digest recapture; semantic method fields are fail-closed.",
+  "metadata_reference": "evidence/directions.metadata.reference.json",
+  "metadata_reference_sha256": "d77801ddc2eebad5b698439f68c4d7b95f539f09755b11edc25b93d1bb5d5cf4",
+  "recorded_original_metadata_sha256": "84217794ae4b0c55161f3ac087cb5fdd53f89b311b780d8666d1c11ddf02b4b5",
+  "execution_metadata_policy": "Use the bundled path-sanitized reference sidecar with a recovered original tensor, or the newly generated sidecar with an exact-digest recapture; semantic method fields are fail-closed.",
   "git_tracked": false,
   "public_release_asset_published": false,
   "required_for_execution": true,
   "archive_status": "missing",
   "recovery": [
-    "Recover the original tensor from the recorded run directory and pair it with the bundled canonical metadata sidecar.",
+    "Recover the original tensor from the recorded run directory and pair it with the bundled path-sanitized metadata reference.",
     "Recapture with runtime/Dockerfile and scripts/capture_directions.py; accept it for this locked method only if the tensor digest matches and the sidecar passes all semantic locks."
   ],
   "fail_closed": "Do not substitute the earlier FP8 direction or accept a different digest."
